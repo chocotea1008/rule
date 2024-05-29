@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>커뮤니티 가이드라인</title>
+    <style>
+        body {
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            transition: background-color 0.5s, color 0.5s;
+        }
+
+        .container {
+            width: 80%;
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: var(--container-bg);
+            border-radius: 8px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.6);
+            transition: background-color 0.5s;
+        }
+
+        :root {
+            --container-bg: #2e2e2e;
+            --text-color: #f5f5f5;
+            --icon-bg: #ffa726;
+            --icon-color: #1e1e1e;
+            --faded-color: #aaaaaa;
+            --example-bg: #3e3e3e;
+            --example-border: #ffa726;
+        }
+
+        [data-theme="light"] {
+            --container-bg: #f5f5f5;
+            --text-color: #1e1e1e;
+            --icon-bg: #ffa726;
+            --icon-color: #1e1e1e;
+            --faded-color: #888888;
+            --example-bg: #ffffff;
+            --example-border: #ffa726;
+        }
+
+        body {
+            background-color: var(--container-bg);
+            color: var(--text-color);
+        }
+
+        h1 {
+            color: var(--icon-bg);
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        h2 {
+            color: var(--icon-bg);
+            margin-top: 0;
+        }
+
+        p, ul {
+            line-height: 1.8;
+        }
+
+        ul {
+            margin: 10px 0;
+            padding-left: 20px;
+        }
+
+        li {
+            margin: 10px 0;
+        }
+
+        section {
+            margin-bottom: 30px;
+            padding-left: 60px;
+            position: relative;
+        }
+
+        .icon {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 40px;
+            height: 40px;
+            background-color: var(--icon-bg);
+            color: var(--icon-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 8px;
+            font-weight: bold;
+        }
+
+        .examples {
+            padding-left: 10px;
+        }
+
+        .example-icon {
+            display: inline-block;
+            width: 30px;
+            height: 30px;
+            background-color: var(--icon-bg);
+            color: var(--icon-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 8px;
+            font-weight: bold;
+            margin-right: 5px;
+        }
+
+        .example-box {
+            background-color: var(--example-bg);
+            border: 1px solid var(--example-border);
+            border-radius: 8px;
+            padding: 10px;
+            margin-top: 10px;
+        }
+
+        .faded {
+            color: var(--faded-color);
+        }
+
+        .toc {
+            background-color: var(--example-bg);
+            border: 1px solid var(--example-border);
+            border-radius: 8px;
+            padding: 10px;
+            margin-bottom: 20px;
+        }
+
+        .toc a {
+            color: var(--text-color);
+            text-decoration: none;
+        }
+
+        .toc a:hover {
+            text-decoration: underline;
+        }
+
+        .theme-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: var(--icon-bg);
+            color: var(--icon-color);
+            border: none;
+            border-radius: 8px;
+            padding: 10px;
+            cursor: pointer;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                width: 95%;
+            }
+
+            .icon {
+                width: 30px;
+                height: 30px;
+                font-size: 0.8em;
+            }
+
+            .example-icon {
+                width: 25px;
+                height: 25px;
+                font-size: 0.8em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <button class="theme-toggle" onclick="toggleTheme()">다크 모드</button>
+    <div class="container">
+        <h1>커뮤니티 가이드라인</h1>
+        <div class="toc">
+            <ul>
+                <li><a href="#rule1">1. 닉네임 규정</a></li>
+                <li><a href="#rule2">2. 경고 및 차단 사유</a></li>
+                <li><a href="#rule3">3. 타게임 이야기</a></li>
+                <li><a href="#rule4">4. 경고 누적</a></li>
+                <li><a href="#rule5">5. 분쟁 해결</a></li>
+                <li><a href="#rule6">6. 관리자의 판단</a></li>
+                <li><a href="#rule7">7. 제보 및 문의</a></li>
+                <li><a href="#rule8">8. 인신공격 및 선정성/폭력성 기준</a></li>
+            </ul>
+        </div>
+        <section id="rule1">
+            <div class="icon">1</div>
+            <h2>닉네임 규정</h2>
+            <p>카카오프렌즈 닉네임 프로필은 추방사유입니다. <span class="faded">(예: ~하는 콘, 무지, 프로도, 어피치, 제이지, 네오, 튜브, 라이언)</span> 인게임 닉네임혹은 임의의 닉네임으로 변경하시는 것을 권장합니다.</p>
+        </section>
+        <section id="rule2">
+            <div class="icon">2</div>
+            <h2>경고 및 차단 사유</h2>
+            <p>다음과 같은 행위는 경고 및 차단사유가 될 수 있습니다:</p>
+            <ul>
+                <li>도배 및 광고, 허가되지 않은 홍보</li>
+                <li>인신공격</li>
+                <li>사적인 만남 이야기</li>
+                <li>과도한 선정성/폭력성을 포함하는 게시물 업로드</li>
+            </ul>
+        </section>
+        <section id="rule3">
+            <div class="icon">3</div>
+            <h2>타게임 이야기</h2>
+            <p>타게임 이야기는 경고 및 가리기사유가 될 수 있습니다.</p>
+            <p>타게임 <span class="faded">(이터널리턴을 제외한 온라인 게임)</span> 이야기의 기준은 다음과 같습니다:</p>
+            <ul>
+                <li>타게임을 주제로 하는 대화, 스크린샷, 팬아트, 미디어, 방송</li>
+                <li>블랙서바이벌의 '인게임 플레이'를 주제로 하는 대화, 미디어, 방송</li>
+            </ul>
+            <p>예외는 다음과 같습니다:</p>
+            <ul>
+                <li>타게임 관련된 짤막한, 대화중의 이해를 돕기위한 단어 사용</li>
+                <li>블랙서바이벌의 스토리, 스킨등 이터널리턴과 직접적인 관련이 있는 대화, 미디어, 방송</li>
+            </ul>
+        </section>
+        <section id="rule4">
+            <div class="icon">4</div>
+            <h2>경고 누적</h2>
+            <p>경고 2회 누적시 차단 조치됩니다. 경고양식: <span class="faded">@A [사유] 경고 1회 드립니다.</span></p>
+        </section>
+        <section id="rule5">
+            <div class="icon">5</div>
+            <h2>분쟁 해결</h2>
+            <p>상호간의 분쟁 발생시 개인적으로 해결하시길 바랍니다. 오픈채팅방에서 분쟁 발생시 관리자가 임의로 중재할 수 있습니다.</p>
+        </section>
+        <section id="rule6">
+            <div class="icon">6</div>
+            <h2>관리자의 판단</h2>
+            <p>임의의 상황에 관리자의 주관적 판단에 따라 제재가 발생할 수 있으며, 사유를 명확하게 고지해드리겠습니다.</p>
+        </section>
+        <section id="rule7">
+            <div class="icon">7</div>
+            <h2>제보 및 문의</h2>
+            <p>각종 제보, 문의사항 및 불편사항, 내전 신청은 <span class="faded">@블라인드 및 @다루나루</span> 에게 개인메세지 부탁드립니다.</p>
+        </section>
+        <section id="rule8">
+            <div class="icon">8</div>
+            <h2>인신공격 및 선정성/폭력성 기준</h2>
+            <p>실존인물을 대상으로 하지 않으며, 단순한 추임새로 사용된 욕설:</p>
+            <div class="example-box">
+                <span class="example-icon">예</span> 알론소 ㅈㄴ 잘한다, 블라인드 ㅈㄴ 잘한다 - 제재 없음, 인신공격 아님.
+            </div><br>
+            <p>실존인물을 대상으로 하지 않았으나, 증오표현으로 사용된 욕설:</p>
+            <div class="example-box">
+                <span class="example-icon">예</span> 알론소 ㅈ같다 - 제재 없으나, 표현의 중함에 따라 주의 혹은 경고
+            </div><br>
+            <p>실존인물을 대상으로 하였으며, 증오표현으로 사용된 욕설:</p>
+            <div class="example-box">
+                <span class="example-icon">예</span> 블라인드 ㅈ같다 - 당사자와의 합의 여하 상관없이 영구차단
+            </div><br>
+            <p>과도한 폭력성:</p>
+                <p>물리적 폭력, 학대, 살상 등이 구체적으로 표현된 것. 상해 유혈 신체훼손 등이 표현된 것.</p>
+            <div class="example-box">
+                <span class="example-icon">예</span> 아디나 학대짤
+            </div><br>
+            <p>과도한 선정성:</p>
+            <p>음부 노출 및 직접적인 성행위, 사회윤리에 어긋나는 행위 등이 포함된 것. </p>
+            <div class="example-box">
+                <span class="example-icon">예</span> *^^*
+            </div><br>
+            <p>공포성 게시물:</p>
+            <p>심리적 불안 및 긴장감을 주는 장면이 구체적으로 표현되어 공포감을 줄 수 있는 것. </p>
+            <div class="example-box">
+                <span class="example-icon">예</span> 이렘 기괴짤
+            </div>
+        </section>
+    </div>
+    <script>
+        function toggleTheme() {
+            const currentTheme = document.documentElement.getAttribute('data-theme');
+            const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+            document.documentElement.setAttribute('data-theme', newTheme);
+            document.querySelector('.theme-toggle').textContent = newTheme === 'light' ? '다크 모드' : '화이트 모드';
+        }
+
+        document.documentElement.setAttribute('data-theme', 'dark'); // Default theme
+    </script>
+</body>
+</html>
