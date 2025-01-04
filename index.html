@@ -72,16 +72,18 @@
         transform: translateY(-2px);
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
       }
-
       .icon {
         background-color: var(--primary-color);
         width: 32px;
         height: 32px;
         border-radius: 16px;
         color: white;
-        font-size: 0.9em;
+        font-size: 1.5em;
         margin-bottom: 16px;
         transition: background-color 0.3s;
+        display: flex;
+        justify-content: center;
+        align-items: center;
       }
 
       .toc {
@@ -129,8 +131,9 @@
 
       .example-icon {
         background-color: var(--primary-color);
-        width: 24px;
-        height: 24px;
+        width: 16px;
+        height: 16px;
+        padding: 5px;
         font-size: 0.8em;
         border-radius: 12px;
       }
@@ -317,7 +320,22 @@
           newTheme === "light" ? "다크 모드" : "화이트 모드";
       }
 
-      document.documentElement.setAttribute("data-theme", "dark"); // Default theme
+      const prefersDarkScheme = window.matchMedia(
+        "(prefers-color-scheme: dark)"
+      );
+      document.documentElement.setAttribute(
+        "data-theme",
+        prefersDarkScheme.matches ? "dark" : "light"
+      );
+      document.querySelector(".theme-toggle").textContent =
+        prefersDarkScheme.matches ? "화이트 모드" : "다크 모드";
+
+      prefersDarkScheme.addEventListener("change", (e) => {
+        const newTheme = e.matches ? "dark" : "light";
+        document.documentElement.setAttribute("data-theme", newTheme);
+        document.querySelector(".theme-toggle").textContent =
+          newTheme === "light" ? "다크 모드" : "화이트 모드";
+      });
     </script>
   </body>
 </html>
