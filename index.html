@@ -330,6 +330,10 @@
         justify-content: center;
         flex: 1;
       }
+      
+      .color-button {
+        font-size: 20px;
+      }
 
       .bottom-section {
         background: var(--card-bg);
@@ -960,48 +964,24 @@
       </div>
     </div>
 
-    <!-- 데스크톱용 컨트롤 -->
+    <!-- 데스크톱용 컨트롤 수정 -->
     <div class="desktop-controls">
-      <button
-        class="control-button color-toggle"
-        onclick="changeRandomColor()"
-        title="랜덤 색상"
-        style="font-size: 20px"
-      >
+      <button class="control-button color-toggle color-button" onclick="changeRandomColor()" title="랜덤 색상">
         🎨
       </button>
-      <button
-        class="control-button theme-toggle"
-        onclick="toggleTheme()"
-        title="테마 변경"
-      >
+      <button class="control-button theme-toggle" title="테마 변경">
         <span class="theme-icon">☀️</span>
       </button>
       <button class="control-button back-to-top" title="맨 위로">↑</button>
     </div>
 
-    <!-- 모바일용 컨트롤 -->
+    <!-- 모바일용 컨트롤 수정 -->
     <div class="mobile-controls">
       <button class="control-button back-to-top" title="맨 위로">↑</button>
-      <button
-        class="control-button toggle-controls"
-        onclick="toggleMobileControls()"
-      >
-        ≡
-      </button>
+      <button class="control-button toggle-controls" onclick="toggleMobileControls()">≡</button>
       <div class="controls-submenu">
-        <button
-          class="control-button"
-          onclick="changeRandomColor()"
-          title="랜덤 색상"
-        >
-          🎨
-        </button>
-        <button
-          class="control-button theme-toggle"
-          onclick="toggleTheme()"
-          title="테마 변경"
-        >
+        <button class="control-button color-button" onclick="changeRandomColor()" title="랜덤 색상">🎨</button>
+        <button class="control-button theme-toggle" title="테마 변경">
           <span class="theme-icon">☀️</span>
         </button>
       </div>
@@ -1149,15 +1129,13 @@
           if ((e.ctrlKey || e.metaKey) && e.key === "f") {
             e.preventDefault();
             searchInput.focus();
+            // 최상단으로 스크롤
+            window.scrollTo({
+              top: 0,
+              behavior: 'smooth'
+            });
           }
         });
-
-        // 컬러픽커 이벤트 리스너
-        document
-          .getElementById("colorPicker")
-          .addEventListener("input", (e) => {
-            updateThemeColor(e.target.value);
-          });
 
         // 시스템 테마 감지 및 초기 설정
         function initializeTheme() {
@@ -1223,31 +1201,24 @@
           document.documentElement.setAttribute("data-theme", newTheme);
           setThemeIcon(e.matches);
         });
-      });
 
-      function toggleTheme() {
-        const currentTheme =
-          document.documentElement.getAttribute("data-theme");
-        const newTheme = currentTheme === "light" ? "dark" : "light";
-        document.documentElement.setAttribute("data-theme", newTheme);
-        setThemeIcon(newTheme === "dark");
-      }
+        // 백투탑 버튼들에 이벤트 리스너 추가
+        document.querySelectorAll('.back-to-top').forEach(button => {
+          button.addEventListener('click', () => {
+            window.scrollTo({
+              top: 0,
+              behavior: 'smooth'
+            });
+          });
+        });
+
+        // 초기 테마 설정
+        initializeTheme();
+      });
 
       function showColorPicker() {
         const wrapper = document.querySelector(".color-picker-wrapper");
         wrapper.classList.toggle("show");
-      }
-
-      function toggleColorPicker(button) {
-        // 다른 팝업들 모두 닫기
-        document.querySelectorAll(".color-picker-popup").forEach((popup) => {
-          if (!popup.parentElement.contains(button)) {
-            popup.classList.remove("show");
-          }
-        });
-        // 현재 버튼의 팝업 토글
-        const popup = button.querySelector(".color-picker-popup");
-        popup.classList.toggle("show");
       }
 
       function changeRandomColor() {
@@ -1301,20 +1272,6 @@
         return p;
       }
 
-      // 컬러픽커 이벤트 리스너
-      document.getElementById("colorPicker").addEventListener("input", (e) => {
-        updateThemeColor(e.target.value);
-      });
-
-      // 외부 클릭시 컬러픽커 닫기
-      document.addEventListener("click", (e) => {
-        const popup = document.querySelector(".color-picker-popup");
-        const colorButton = document.querySelector(".color-toggle");
-        if (!popup.contains(e.target) && !colorButton.contains(e.target)) {
-          popup.classList.remove("show");
-        }
-      });
-
       function updateThemeColor(color) {
         const root = document.documentElement;
         root.style.setProperty("--primary-color", color);
@@ -1342,18 +1299,96 @@
       }
 
       // 전역 함수로 이동 (다른 곳에서 호출 가능하도록)
+      // 스크립트 부분에서 window.toggleTheme 함수를 수정
+
       window.toggleTheme = function() {
         const currentTheme = document.documentElement.getAttribute('data-theme');
         const newTheme = currentTheme === 'light' ? 'dark' : 'light';
         
+        // 테마 변경
         document.documentElement.setAttribute('data-theme', newTheme);
+        
+        // 로컬 스토리지에 저장
         localStorage.setItem('theme', newTheme);
-        updateThemeIcon(newTheme === 'dark');
-      }
+        
+        // 아이콘 업데이트
+        const isDark = newTheme === 'dark';
+        document.querySelectorAll('.theme-icon').forEach(icon => {
+          icon.textContent = isDark ? '🌙' : '☀️';
+        });
+      };
+
+// HTML 버튼 부분도 수정
 
       window.updateThemeIcon = function(isDark) {
         document.querySelectorAll('.theme-icon').forEach(icon => {
           icon.textContent = isDark ? '🌙' : '☀️';
+        });
+      }
+
+      // 전역 함수 정의
+      window.updateThemeIcon = function(isDark) {
+        document.querySelectorAll('.theme-icon').forEach(icon => {
+          icon.textContent = isDark ? '🌙' : '☀️';
+        });
+      };
+
+
+      // colorPicker 이벤트 리스너 (존재하는 경우에만)
+      const colorPicker = document.getElementById('colorPicker');
+      if (colorPicker) {
+        colorPicker.addEventListener('input', (e) => {
+          updateThemeColor(e.target.value);
+        });
+      }
+
+      // colorPicker 이벤트 리스너 (존재하는 경우에만)
+      const pickerElement = document.getElementById('colorPicker');
+      if (pickerElement) {
+        pickerElement.addEventListener('input', (e) => {
+          updateThemeColor(e.target.value);
+        });
+      };
+
+      window.updateThemeColor = function(color) {
+        const root = document.documentElement;
+        root.style.setProperty('--primary-color', color);
+        
+        document.querySelectorAll('.control-button, .icon').forEach(el => {
+          el.style.backgroundColor = color;
+        });
+      };
+
+      // 모바일 컨트롤 토글
+      window.toggleMobileControls = function() {
+        const submenu = document.querySelector('.controls-submenu');
+        const toggleBtn = document.querySelector('.toggle-controls');
+        if (submenu && toggleBtn) {
+          submenu.classList.toggle('show');
+          toggleBtn.classList.toggle('active');
+          toggleBtn.textContent = submenu.classList.contains('show') ? '×' : '＋';
+        }
+      };
+
+      
+      // 초기화 실행
+      initializeTheme();
+
+      // 초기화 함수
+      function initializeTheme() {
+        const prefersDarkScheme = window.matchMedia('(prefers-color-scheme: dark)');
+        const storedTheme = localStorage.getItem('theme');
+        const theme = storedTheme || (prefersDarkScheme.matches ? 'dark' : 'light');
+        
+        document.documentElement.setAttribute('data-theme', theme);
+        window.updateThemeIcon?.(theme === 'dark');
+
+        prefersDarkScheme.addEventListener('change', (e) => {
+          if (!localStorage.getItem('theme')) {
+            const newTheme = e.matches ? 'dark' : 'light';
+            document.documentElement.setAttribute('data-theme', newTheme);
+            window.updateThemeIcon?.(e.matches);
+          }
         });
       }
     </script>
