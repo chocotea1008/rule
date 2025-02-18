@@ -1160,6 +1160,49 @@
           });
 
         // 시스템 테마 감지 및 초기 설정
+        function initializeTheme() {
+          const prefersDarkScheme = window.matchMedia('(prefers-color-scheme: dark)');
+          const storedTheme = localStorage.getItem('theme');
+          
+          // 저장된 테마가 있으면 그것을 사용, 없으면 시스템 테마 사용
+          const theme = storedTheme || (prefersDarkScheme.matches ? 'dark' : 'light');
+          document.documentElement.setAttribute('data-theme', theme);
+          updateThemeIcon(theme === 'dark');
+    
+          // 시스템 테마 변경 감지
+          prefersDarkScheme.addListener((e) => {
+            if (!localStorage.getItem('theme')) {  // 수동 설정이 없을 때만
+              const newTheme = e.matches ? 'dark' : 'light';
+              document.documentElement.setAttribute('data-theme', newTheme);
+              updateThemeIcon(e.matches);
+            }
+          });
+        }
+    
+        function updateThemeIcon(isDark) {
+          document.querySelectorAll('.theme-icon').forEach(icon => {
+            icon.textContent = isDark ? '🌙' : '☀️';
+          });
+        }
+    
+        function toggleTheme() {
+          const currentTheme = document.documentElement.getAttribute('data-theme');
+          const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+          
+          document.documentElement.setAttribute('data-theme', newTheme);
+          localStorage.setItem('theme', newTheme);  // 테마 선택 저장
+          updateThemeIcon(newTheme === 'dark');
+        }
+    
+        // 초기화 실행
+        initializeTheme();
+    
+        // 테마 토글 버튼에 이벤트 리스너 추가
+        document.querySelectorAll('.theme-toggle').forEach(button => {
+          button.addEventListener('click', toggleTheme);
+        });
+
+        // 시스템 테마 변경 감지
         const prefersDarkScheme = window.matchMedia(
           "(prefers-color-scheme: dark)"
         );
@@ -1296,6 +1339,22 @@
 
         // × 대신 + 사용하고 회전으로 처리
         toggleBtn.textContent = "＋";
+      }
+
+      // 전역 함수로 이동 (다른 곳에서 호출 가능하도록)
+      window.toggleTheme = function() {
+        const currentTheme = document.documentElement.getAttribute('data-theme');
+        const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+        
+        document.documentElement.setAttribute('data-theme', newTheme);
+        localStorage.setItem('theme', newTheme);
+        updateThemeIcon(newTheme === 'dark');
+      }
+
+      window.updateThemeIcon = function(isDark) {
+        document.querySelectorAll('.theme-icon').forEach(icon => {
+          icon.textContent = isDark ? '🌙' : '☀️';
+        });
       }
     </script>
   </body>
