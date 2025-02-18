@@ -16,6 +16,8 @@
         --faded-color: #9aa0a6;
         --example-bg: #3d3d3d;
         --example-border: #4285f4;
+        --nav-bg: rgba(45, 45, 45, 0.95);
+        --scroll-color: #4285f4;
       }
 
       [data-theme="light"] {
@@ -29,6 +31,8 @@
         --faded-color: #5f6368;
         --example-bg: #f8f9fa;
         --example-border: #1a73e8;
+        --nav-bg: rgba(255, 255, 255, 0.95);
+        --scroll-color: #1a73e8;
       }
 
       body {
@@ -38,11 +42,42 @@
         line-height: 1.6;
       }
 
+      li {
+        list-style: none;
+        margin: 12px 0;
+        padding-left: 24px;
+        position: relative;
+      }
+
+      li::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 8px;
+        width: 6px;
+        height: 6px;
+        background-color: var(--primary-color);
+        border-radius: 50%;
+      }
+
+      li li {
+        margin: 8px 0;
+      }
+
+      li li::before {
+        width: 4px;
+        height: 4px;
+        background-color: var(--faded-color);
+      }
+
       .container {
         width: 90%;
         max-width: 1000px;
         margin: 40px auto;
         padding: 0;
+        margin-top: 120px;
+        padding-top: 80px; /* 상단 여백 증가 */
+        min-height: 100vh;
       }
 
       h1 {
@@ -50,6 +85,7 @@
         font-size: 2.5em;
         font-weight: 400;
         margin-bottom: 40px;
+        text-align: center;
       }
 
       h2 {
@@ -57,6 +93,7 @@
         font-weight: 400;
         font-size: 1.5em;
         margin-bottom: 20px;
+        display: inline;
       }
 
       section {
@@ -66,12 +103,22 @@
         border-radius: 16px;
         box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
         transition: transform 0.2s, box-shadow 0.2s;
+        opacity: 0;
+        transform: translateY(20px);
+        transition: opacity 0.5s, transform 0.5s;
+        scroll-margin-top: 100px; /* 스크롤 시 상단 여백 확보 */
       }
 
       section:hover {
         transform: translateY(-2px);
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
       }
+
+      section.visible {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
       .icon {
         background-color: var(--primary-color);
         width: 32px;
@@ -81,9 +128,10 @@
         font-size: 1.5em;
         margin-bottom: 16px;
         transition: background-color 0.3s;
-        display: flex;
+        display: inline-flex;
         justify-content: center;
         align-items: center;
+        margin-right: 5px;
       }
 
       .toc {
@@ -113,21 +161,12 @@
         color: var(--text-color);
       }
 
-      .theme-toggle {
-        background-color: var(--card-bg);
-        color: var(--primary-color);
-        border: 2px solid var(--primary-color);
-        border-radius: 24px;
-        padding: 8px 16px;
-        font-family: "Google Sans", sans-serif;
-        font-size: 0.9em;
-        cursor: pointer;
-        transition: all 0.3s;
-      }
-
-      .theme-toggle:hover {
-        background-color: var(--primary-color);
-        color: white;
+      .theme-toggle,
+      .color-toggle,
+      .color-picker-popup,
+      .floating-buttons,
+      .desktop-controls {
+        display: none;
       }
 
       .example-icon {
@@ -137,6 +176,197 @@
         padding: 5px;
         font-size: 0.8em;
         border-radius: 12px;
+        color: #ffffff;
+      }
+
+      .nav-container {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        background: var(--nav-bg);
+        backdrop-filter: blur(10px);
+        z-index: 1000;
+        padding: 1rem;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      }
+
+      .nav-links {
+        display: flex;
+        gap: 1.5rem;
+        overflow-x: auto;
+        padding-bottom: 0.5rem;
+        scrollbar-width: none;
+      }
+
+      .nav-links::-webkit-scrollbar {
+        display: none;
+      }
+
+      .nav-link {
+        margin-top: 0.5rem;
+        color: var(--text-color);
+        text-decoration: none;
+        white-space: nowrap;
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        transition: background-color 0.3s;
+      }
+
+      .nav-link.active {
+        background-color: var(--primary-color);
+        color: white;
+        font-weight: 500;
+        transform: translateY(-2px);
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+
+      .progress-container {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 4px;
+        background: transparent;
+        z-index: 1001;
+      }
+
+      .progress-bar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 4px;
+        background: rgba(0, 0, 0, 0.1);
+        z-index: 1002;
+      }
+
+      .progress-indicator {
+        height: 100%;
+        background: var(--primary-color);
+        width: 0;
+        transition: width 0.2s;
+      }
+
+      .back-to-top:hover {
+        transform: translateY(-5px);
+      }
+
+      /* 테마 아이콘 스타일 */
+      .theme-icon {
+        font-size: 24px;
+      }
+
+      .floating-buttons {
+        position: fixed;
+        bottom: 2rem;
+        right: 2rem;
+        display: flex;
+        gap: 1rem;
+        z-index: 1000;
+      }
+
+      .color-picker-popup {
+        position: absolute;
+        background: var(--card-bg);
+        border-radius: 12px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        padding: 1rem;
+        display: none;
+        z-index: 1001;
+      }
+
+      /* 데스크톱 환경 */
+      .desktop-controls .color-picker-popup {
+        bottom: calc(100% + 1rem); /* 버튼 위에 배치 */
+        right: 0;
+      }
+
+      /* 모바일 환경 */
+      .mobile-controls .color-picker-popup {
+        top: 50%;
+        right: calc(100% + 1rem); /* 버튼 왼쪽에 배치 */
+        transform: translateY(-50%);
+      }
+
+      .color-picker-popup.show {
+        display: block;
+      }
+
+      input[type="color"] {
+        width: 100px;
+        height: 40px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+      }
+
+      .color-picker-popup.show {
+        display: flex;
+      }
+
+      .color-picker-popup input[type="color"] {
+        width: 100%;
+        height: 40px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+      }
+
+      .color-picker-buttons {
+        display: flex;
+        gap: 0.5rem;
+      }
+
+      .color-picker-button {
+        padding: 8px;
+        border: none;
+        border-radius: 8px;
+        background: var(--primary-color);
+        color: white;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex: 1;
+      }
+
+      .bottom-section {
+        background: var(--card-bg);
+        padding: 2rem;
+        margin-top: 3rem;
+        text-align: center;
+        border-radius: 16px;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+      }
+
+      .bottom-title {
+        font-size: 1.2em;
+        color: var(--faded-color);
+        margin-bottom: 1rem;
+      }
+
+      .social-links {
+        display: flex;
+        justify-content: center;
+        gap: 2rem;
+        margin-top: 1rem;
+      }
+
+      .social-link {
+        width: 40px;
+        height: 40px;
+        transition: transform 0.3s;
+      }
+
+      .social-link:hover {
+        transform: translateY(-3px);
+      }
+
+      .social-link img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
       }
 
       @media (max-width: 600px) {
@@ -153,191 +383,920 @@
           font-size: 2em;
         }
       }
+
+      @media (max-width: 768px) {
+        .nav-container {
+          padding: 0.5rem;
+        }
+
+        .nav-links {
+          gap: 0.5rem;
+        }
+
+        .nav-link {
+          padding: 0.3rem 0.8rem;
+          font-size: 0.9em;
+        }
+
+        .theme-toggle {
+          bottom: 1rem;
+          left: 1rem;
+          width: 40px;
+          height: 40px;
+        }
+
+        .theme-icon {
+          font-size: 20px;
+        }
+
+        .color-toggle {
+          bottom: 1rem;
+          right: calc(1rem + 100px);
+          width: 40px;
+          height: 40px;
+        }
+
+        .floating-buttons {
+          flex-direction: column;
+          gap: 0.5rem;
+        }
+
+        .color-picker-popup {
+          top: auto;
+          bottom: 60px;
+          right: 0;
+          width: 150px;
+        }
+      }
+
+      .footer {
+        background: var(--card-bg);
+        padding: 2rem 0;
+        margin-top: 5rem;
+        text-align: center;
+      }
+
+      .footer-title {
+        font-size: 1.2em;
+        color: var(--primary-color);
+        margin-bottom: 1rem;
+      }
+
+      .social-links {
+        display: flex;
+        justify-content: center;
+        gap: 1.5rem;
+        margin-top: 1rem;
+      }
+
+      .social-link img {
+        width: 32px;
+        height: 32px;
+        transition: transform 0.3s;
+      }
+
+      /* 모바일 버튼 컨트롤 스타일 */
+      .mobile-controls {
+        position: fixed;
+        bottom: 1.5rem;
+        right: 1.5rem;
+        display: none;
+        flex-direction: column;
+        align-items: flex-end;
+        gap: 1rem;
+        z-index: 1000;
+      }
+
+      .controls-container {
+        display: flex;
+        flex-direction: column; /* 세로 정렬 */
+        gap: 0.5rem;
+        margin-bottom: 0.5rem;
+        transition: all 0.3s;
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(10px);
+      }
+
+      .controls-container.show {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0);
+      }
+
+      .mobile-controls .back-to-top {
+        position: static; /* fixed 제거 */
+        margin-bottom: 0.3rem;
+      }
+
+      .control-button {
+        width: 45px;
+        height: 45px;
+        border-radius: 50%;
+        background: var(--primary-color);
+        color: white;
+        border: none;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        transition: transform 0.3s;
+        opacity: 0.8;
+      }
+
+      .control-button:hover {
+        transform: translateY(-3px);
+        opacity: 1;
+      }
+
+      .toggle-controls {
+        background: var(--primary-color);
+        z-index: 1001;
+      }
+
+      @media (max-width: 768px) {
+        .footer-container {
+          grid-template-columns: 1fr;
+          gap: 2rem;
+          padding: 0 1rem;
+        }
+
+        .footer-section {
+          padding: 0;
+        }
+
+        .mobile-controls {
+          display: flex;
+        }
+
+        .control-button {
+          width: 50px; /* 버튼 크기 증가 */
+          height: 50px;
+          font-size: 1.2em;
+          margin-bottom: 0.5rem;
+        }
+
+        .mobile-controls .toggle-controls {
+          transition: transform 0.3s ease;
+          margin-bottom: 0.5rem;
+        }
+
+        .mobile-controls .toggle-controls.active {
+          transform: rotate(45deg);
+        }
+      }
+
+      /* 검색 관련 스타일 */
+      .search-container {
+        text-align: center;
+        margin: 2rem 0;
+        margin-bottom: 5rem;
+      }
+
+      .search-input {
+        width: 100%;
+        max-width: 500px;
+        padding: 1rem;
+        border: 2px solid var(--primary-color);
+        border-radius: 25px;
+        font-size: 1rem;
+        background: var(--card-bg);
+        color: var(--text-color);
+        transition: all 0.3s;
+      }
+
+      .search-input:focus {
+        outline: none;
+        box-shadow: 0 0 0 3px var(--primary-color);
+      }
+
+      .highlight {
+        background-color: rgba(255, 255, 0, 0.3);
+        padding: 2px;
+        border-radius: 3px;
+      }
+
+      section.hidden {
+        display: none;
+      }
+
+      /* 스크롤바 항상 표시 */
+      html {
+        overflow-y: scroll;
+      }
+
+      /* 검색 결과 없음 메시지 스타일 */
+      .no-results {
+        text-align: center;
+        padding: 2rem;
+        color: var(--faded-color);
+        background: var(--card-bg);
+        border-radius: 16px;
+        margin: 2rem 0;
+        display: none;
+      }
+
+      .no-results.show {
+        display: block;
+      }
+      .desktop-controls {
+        position: fixed;
+        bottom: 2rem;
+        right: 2rem;
+        display: flex;
+        gap: 0.8rem;
+        z-index: 1000;
+      }
+
+      .mobile-controls {
+        display: none;
+        position: fixed;
+        bottom: 1rem;
+        right: 1rem;
+        flex-direction: column;
+        align-items: flex-end;
+        gap: 0.8rem;
+        z-index: 1000;
+      }
+
+      .control-button {
+        width: 45px;
+        height: 45px;
+        border-radius: 50%;
+        background: var(--primary-color);
+        color: white;
+        border: none;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        transition: all 0.3s;
+        opacity: 0.9;
+        animation: fadeInScale 0.3s ease-out;
+      }
+
+      .control-button:hover {
+        transform: translateY(-3px);
+        opacity: 1;
+      }
+
+      @keyframes fadeInScale {
+        0% {
+          opacity: 0;
+          transform: scale(0.8);
+        }
+        100% {
+          opacity: 0.8;
+          transform: scale(1);
+        }
+      }
+
+      .controls-submenu {
+        display: none;
+        flex-direction: column;
+        gap: 0.8rem;
+      }
+
+      .controls-submenu.show {
+        display: flex;
+      }
+
+      @media (max-width: 768px) {
+        .desktop-controls {
+          display: none !important; /* 강제 숨김 */
+        }
+
+        .mobile-controls {
+          display: flex;
+        }
+
+        .control-button {
+          width: 35px;
+          height: 35px;
+          font-size: 0.9em;
+        }
+      }
+
+      /* 컬러픽커 스타일 수정 */
+      #colorPicker {
+        position: absolute;
+        opacity: 0;
+        width: 0;
+        height: 0;
+      }
+
+      .color-picker-wrapper {
+        position: fixed;
+        bottom: calc(2rem + 60px); /* 버튼 위에 배치 */
+        right: 2rem;
+        background: var(--card-bg);
+        padding: 1rem;
+        border-radius: 12px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        display: none;
+        z-index: 999;
+      }
+
+      .color-picker-wrapper.show {
+        display: block;
+      }
+
+      /* 데스크톱 컨트롤 수정 */
+      .desktop-controls {
+        position: fixed;
+        bottom: 2rem;
+        right: 2rem;
+        display: flex;
+        gap: 1rem;
+        z-index: 1000;
+      }
+
+      .color-picker-popup {
+        position: absolute;
+        bottom: calc(100% + 1rem); /* 버튼 바로 위에 위치 */
+        right: 0;
+        background: var(--card-bg);
+        padding: 1rem;
+        border-radius: 12px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        display: none;
+        width: 200px;
+      }
+
+      .color-picker-popup.show {
+        display: block;
+      }
+
+      @media (max-width: 768px) {
+        .color-picker-popup {
+          bottom: 50%;
+          right: calc(100% + 1rem); /* 버튼 좌측에 위치 */
+        }
+      }
+
+      /* 모바일 환경 컬러픽커 위치 조정 */
+      @media (max-width: 768px) {
+        .color-picker-wrapper {
+          bottom: 1rem;
+          right: calc(1rem + 50px); /* 버튼 좌측에 배치 */
+          transform: none;
+        }
+
+        .desktop-controls {
+          display: none !important;
+        }
+      }
+
+      /* 불필요한 컬러픽커 관련 스타일 제거 */
+      .color-picker-popup,
+      .color-picker-wrapper,
+      #colorPicker {
+        display: none;
+      }
+
+      /* 컨트롤 버튼 정리 */
+      .desktop-controls {
+        position: fixed;
+        bottom: 2rem;
+        right: 2rem;
+        display: flex;
+        gap: 1rem;
+        z-index: 1000;
+      }
+
+      .mobile-controls {
+        display: none;
+      }
+
+      @media (max-width: 768px) {
+        .desktop-controls {
+          display: none !important;
+        }
+
+        .mobile-controls {
+          display: flex;
+        }
+      }
     </style>
   </head>
   <body>
-    <button class="theme-toggle" onclick="toggleTheme()">화이트 모드</button>
+    <div class="progress-container">
+      <div class="progress-bar">
+        <div class="progress-indicator"></div>
+      </div>
+    </div>
+
+    <nav class="nav-container">
+      <div class="nav-links">
+        <a href="#rule1" class="nav-link">기본 원칙</a>
+        <a href="#rule2" class="nav-link">닉네임</a>
+        <a href="#rule3" class="nav-link">행동 수칙</a>
+        <a href="#rule4" class="nav-link">제재 정책</a>
+        <a href="#rule5" class="nav-link">콘텐츠</a>
+        <a href="#rule6" class="nav-link">관리/문의</a>
+      </div>
+    </nav>
+
     <div class="container">
       <h1>커뮤니티 가이드라인</h1>
-      <div class="toc">
-        <ul>
-          <li><a href="#rule1">1. 닉네임 규정</a></li>
-          <li><a href="#rule2">2. 경고 및 차단 사유</a></li>
-          <li><a href="#rule3">3. 타게임 이야기</a></li>
-          <li><a href="#rule4">4. 경고 누적</a></li>
-          <li><a href="#rule5">5. 분쟁 해결</a></li>
-          <li><a href="#rule6">6. 관리자의 판단</a></li>
-          <li><a href="#rule7">7. 제보 및 문의</a></li>
-          <li><a href="#rule8">8. 인신공격 및 선정성/폭력성 기준</a></li>
-        </ul>
+      <div class="search-container">
+        <input
+          type="text"
+          class="search-input"
+          placeholder="쓸데없지만... 검색어를 입력하세요..."
+        />
       </div>
+
+      <!-- 검색 결과 없음 메시지 추가 -->
+      <div class="no-results">검색 결과가 없습니다.</div>
+
       <section id="rule1">
         <div class="icon">1</div>
-        <h2>닉네임 규정</h2>
-        <p>
-          카카오프렌즈 닉네임 프로필은 추방사유입니다.
-          <span class="faded"
-            >(예: ~하는 콘, 무지, 프로도, 어피치, 제이지, 네오, 튜브,
-            라이언)</span
-          >
-          인게임 닉네임혹은 임의의 닉네임으로 변경하시는 것을 권장합니다.
-        </p>
+        <h2>기본 원칙</h2>
+        <p>이 커뮤니티는 다음과 같은 기본 원칙을 따릅니다:</p>
+        <ul>
+          <li>모든 구성원은 상호 존중을 기반으로 소통합니다</li>
+          <li>이터널 리턴 게임과 관련된 건전한 커뮤니티를 지향합니다</li>
+          <li>분쟁 발생시 상호간의 대화로 해결하는 것을 원칙으로 합니다</li>
+        </ul>
       </section>
+
       <section id="rule2">
         <div class="icon">2</div>
-        <h2>경고 및 차단 사유</h2>
-        <p>다음과 같은 행위는 경고 및 차단사유가 될 수 있습니다:</p>
+        <h2>닉네임 정책</h2>
+        <p>
+          커뮤니티의 건전한 운영을 위해 다음과 같은 닉네임 정책을 시행합니다:
+        </p>
         <ul>
           <li>
-            도배 및 광고, 허가되지 않은 홍보 (단, 이터널 리턴이 관련된
-            내용이거나 다루는 유튜브, 치지직 채널등은 자율적으로 허용)
+            카카오프렌즈 닉네임 프로필은 사용이 금지됩니다
+            <span class="faded"
+              >(예: ~하는 콘, 무지, 프로도, 어피치, 제이지, 네오, 튜브,
+              라이언)</span
+            >
           </li>
-          <li>
-            인신공격 및 노골적인 과도한 욕설
-            <a href="#rule8">자세한 기준은 해당 사안 참조</a>
-          </li>
-          <li>사적인 만남 이야기</li>
-          <li>과도한 선정성/폭력성을 포함하는 게시물 업로드</li>
-          <li>정치적/종교적 갈등 조장</li>
-          <li>불법적인 콘텐츠</li>
-          <li>반사회적인 행동 및 불쾌감을 줄 수 있는 행동</li>
+          <li>인게임 닉네임 또는 적절한 일반 닉네임 사용을 권장합니다</li>
+          <li>불쾌감을 주거나 부적절한 닉네임은 변경을 요청할 수 있습니다</li>
         </ul>
       </section>
+
       <section id="rule3">
         <div class="icon">3</div>
-        <h2>타게임 이야기</h2>
-        <p>타게임 이야기는 경고 및 가리기사유가 될 수 있습니다.</p>
-        <p>
-          타게임
-          <span class="faded">(이터널리턴을 제외한 게임)</span> 이야기의
-          기준은 다음과 같습니다:
-        </p>
+        <h2>커뮤니티 행동 수칙</h2>
+        <p>다음과 같은 행위는 금지됩니다:</p>
         <ul>
-          <li>타게임을 주제로 하는 대화, 스크린샷, 팬아트, 미디어, 방송, 이스포츠</li>
+          <li>인신공격 및 과도한 욕설</li>
+          <li>정치적/종교적 갈등 조장</li>
+          <li>불법적인 콘텐츠 게시</li>
           <li>
-            블랙서바이벌의 '인게임 플레이'를 주제로 하는 대화, 미디어, 방송
+            허가되지 않은 광고 및 홍보(다발적인 개인 메시지를 통해서도 금지)
+            <ul>
+              <li>
+                다른 오픈채팅방, 디스코드 및 준하는 소셜 커뮤니티 홍보 금지
+              </li>
+              <li>
+                이터널 리턴을 주제로 하는 유튜브, 트위치, 치지직, SOOP 채널의
+                홍보는 자율적으로 허용용
+              </li>
+            </ul>
           </li>
+          <li>반사회적 행동 및 불쾌감을 주는 행위</li>
         </ul>
-        <p>예외는 다음과 같습니다:</p>
+        <p><strong>타 게임 관련 정책:</strong></p>
         <ul>
+          <li>타 게임 주제의 대화, 스크린샷, 미디어 공유는 제한됩니다</li>
           <li>
-            타게임 관련된 짤막한, 대화중의 이해를 돕기위한 단어 사용 (단, 맥략이
-            있어야 함. 뜬금없는 타게임에 관해 언급시 제재 사유가 될 수 있음)
+            예외사항:
+            <ul>
+              <li>대화의 문맥상 필요한 짧은 언급</li>
+              <li>게임계의 큰 파장을 일으킨 중요 이슈</li>
+              <li>게임계에서 범용적으로 쓰이는 인터넷 밈</li>
+              <li>블랙서바이벌의 인게임 콘텐츠를 제외한 내용</li>
+            </ul>
           </li>
-          <li>
-            블랙서바이벌의 스토리, 스킨등 이터널리턴과 직접적인 관련이 있는
-            대화, 미디어, 방송
-          </li>
-          <li>게임업계의 큰 파장을 일으킨 사건</li>
-          <li>게임업계에서 범용적으로 쓰이는 밈(충분한 저명성이 있어야함)</li>
         </ul>
       </section>
+
       <section id="rule4">
         <div class="icon">4</div>
-        <h2>경고 누적</h2>
+        <h2>제재 정책</h2>
+        <p>규칙 위반 시 다음과 같은 제재가 적용됩니다:</p>
+        <ul>
+          <li>1차: 경고</li>
+          <li>2차: 경고 누적으로 인한 차단</li>
+          <li>즉시 차단: 심각한 규칙 위반 시</li>
+        </ul>
         <p>
-          경고 2회 누적시 차단 조치됩니다. 경고양식:
-          <span class="faded">@A [사유] 경고 1회 드립니다.</span>
+          경고는 관리자가 "<span class="faded"
+            >@사용자 [사유] 경고 1회 드립니다.</span
+          >" 형식으로 고지합니다.
         </p>
       </section>
+
       <section id="rule5">
         <div class="icon">5</div>
-        <h2>분쟁 해결</h2>
-        <p>
-          상호간의 분쟁 발생시 개인적으로 해결하시길 바랍니다. 오픈채팅방에서
-          분쟁 발생시 관리자가 임의로 중재할 수 있습니다.
-        </p>
+        <h2>콘텐츠 기준</h2>
+        <p><strong>부적절한 표현 판단 기준:</strong></p>
+
+        <h3>1. 욕설 및 비하:</h3>
+        <div class="example-box">
+          <p>🔵 허용: "알론소 ㅈㄴ 잘한다" - 단순 감탄</p>
+          <p>⚠️ 주의: "알론소 ㅈ같다" - 증오 표현</p>
+          <p>❌ 금지: "(특정 인물 닉네임) ㅈ같다" - 즉시 차단</p>
+        </div>
+
+        <h3>2. 선정성/폭력성:</h3>
+        <div class="example-box">
+          <p>🩸 과도한 폭력 묘사, 선정적 콘텐츠, 공포감 조성 이미지
+            <ul>
+              <p>🔵 허용: "캐릭터의 단순한 폭력 묘사", "비키니 팬아트", "귀없는 이렘"</p>
+              <p>⚠️ 주의: "멍이 든 자국", "주요 부위가 연상케 되는 그림", "뒤틀린 이렘" </p>
+              <p>❌ 금지: "과도한 멍 자국 또는 직접적인 학대 묘사", "주요 부위 자국이 나타나는 그림", "뒤틀린 황천의 괴물 이렘"</p>
+            </ul>
+          </p>
+        </div>
       </section>
+
       <section id="rule6">
         <div class="icon">6</div>
-        <h2>관리자의 판단</h2>
-        <p>
-          임의의 상황에 관리자의 주관적 판단에 따라 제재가 발생할 수 있으며,
-          사유를 명확하게 고지해드리겠습니다.
-        </p>
+        <h2>관리 및 문의</h2>
+        <p><strong>관리 정책:</strong></p>
+        <ul>
+          <li>
+            관리자는 커뮤니티의 건전성을 위해 필요한 조치를 취할 수 있습니다
+          </li>
+          <li>모든 제재 조치는 사유와 함께 고지됩니다</li>
+          <li>규칙 적용에 있어 관리자의 합리적 판단이 존중됩니다</li>
+        </ul>
+        <p><strong>문의:</strong></p>
+        <ul>
+          <li>
+            제보, 문의사항, 건의사항: <a href="https://open.kakao.com/me/dummy1008" style="color: #0A73DC; text-decoration: none;">@블라인드</a>
+ 및 관리자<span style="color:#FF85D0">(핑크왕관)</span>
+            개인메시지
+          </li>
+          <li>홍보 문의, 내전 신청도 동일</li>
+        </ul>
       </section>
-      <section id="rule7">
-        <div class="icon">7</div>
-        <h2>제보 및 문의</h2>
-        <p>
-          각종 제보, 문의사항 및 불편사항, 내전 신청은
-          <span class="faded">@블라인드 및 @다루나루</span> 에게 개인메세지
-          부탁드립니다.
-        </p>
-      </section>
-      <section id="rule8">
-        <div class="icon">8</div>
-        <h2>인신공격 및 선정성/폭력성 기준</h2>
-        <p>실존인물을 대상으로 하지 않으며, 단순한 추임새로 사용된 욕설:</p>
-        <div class="example-box">
-          <span class="example-icon">예</span> 알론소 ㅈㄴ 잘한다, 블라인드 ㅈㄴ
-          잘한다 - 제재 없음, 인신공격 아님.
+
+      <div class="footer">
+        <div class="footer-title">이터널 리턴 (舊 블랙서바이벌: 영원회귀)</div>
+        <div class="social-links">
+          <a href="https://open.kakao.com/" class="social-link" target="_blank">
+            <img
+              src="https://developers.kakao.com/assets/img/about/logos/kakaolink/kakaolink_btn_medium.png"
+              alt="카카오톡 링크"
+            />
+          </a>
+          <a href="https://discord.gg/" class="social-link" target="_blank">
+            <img
+              src="https://img.icons8.com/?size=256&id=2mIgusGquJFz&format=png"
+              alt="디스코드 링크"
+            />
+          </a>
         </div>
-        <br />
-        <p>실존인물을 대상으로 하지 않았으나, 증오표현으로 사용된 욕설:</p>
-        <div class="example-box">
-          <span class="example-icon">예</span> 알론소 ㅈ같다 - 제재 없으나,
-          표현의 중함에 따라 주의 혹은 경고
-        </div>
-        <br />
-        <p>실존인물을 대상으로 하였으며, 증오표현으로 사용된 욕설:</p>
-        <div class="example-box">
-          <span class="example-icon">예</span> 블라인드 ㅈ같다 - 당사자와의 합의
-          여하 상관없이 영구차단
-        </div>
-        <br />
-        <p>과도한 폭력성:</p>
-        <p>
-          물리적 폭력, 학대, 살상 등이 구체적으로 표현된 것. 상해 유혈 신체훼손
-          등이 표현된 것.
-        </p>
-        <div class="example-box">
-          <span class="example-icon">예</span> 아디나 학대짤
-        </div>
-        <br />
-        <p>과도한 선정성:</p>
-        <p>
-          음부 노출 및 직접적인 성행위, 사회윤리에 어긋나는 행위 등이 포함된 것.
-        </p>
-        <div class="example-box"><span class="example-icon">예</span> *^^*</div>
-        <br />
-        <p>공포성 게시물:</p>
-        <p>
-          심리적 불안 및 긴장감을 주는 장면이 구체적으로 표현되어 공포감을 줄 수
-          있는 것.
-        </p>
-        <div class="example-box">
-          <span class="example-icon">예</span> 이렘 기괴짤 (단순한 귀 없는
-          이렘은 가능, 혐오감 및 공포감을 조성하는 괴렘은 불가능)
-        </div>
-      </section>
+      </div>
     </div>
+
+    <!-- 데스크톱용 컨트롤 -->
+    <div class="desktop-controls">
+      <button
+        class="control-button color-toggle"
+        onclick="changeRandomColor()"
+        title="랜덤 색상"
+        style="font-size: 20px"
+      >
+        🎨
+      </button>
+      <button
+        class="control-button theme-toggle"
+        onclick="toggleTheme()"
+        title="테마 변경"
+      >
+        <span class="theme-icon">☀️</span>
+      </button>
+      <button class="control-button back-to-top" title="맨 위로">↑</button>
+    </div>
+
+    <!-- 모바일용 컨트롤 -->
+    <div class="mobile-controls">
+      <button class="control-button back-to-top" title="맨 위로">↑</button>
+      <button
+        class="control-button toggle-controls"
+        onclick="toggleMobileControls()"
+      >
+        ≡
+      </button>
+      <div class="controls-submenu">
+        <button
+          class="control-button"
+          onclick="changeRandomColor()"
+          title="랜덤 색상"
+        >
+          🎨
+        </button>
+        <button
+          class="control-button theme-toggle"
+          onclick="toggleTheme()"
+          title="테마 변경"
+        >
+          <span class="theme-icon">☀️</span>
+        </button>
+      </div>
+    </div>
+
     <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        const backToTop = document.querySelector(".back-to-top");
+        const sections = document.querySelectorAll("section");
+        const searchInput = document.querySelector(".search-input");
+        const noResults = document.querySelector(".no-results");
+
+        // Intersection Observer 설정
+        const observer = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((entry) => {
+              if (entry.isIntersecting) {
+                entry.target.classList.add("visible");
+              }
+            });
+          },
+          {
+            threshold: 0.1,
+          }
+        );
+
+        // 모든 섹션에 Observer 적용
+        sections.forEach((section) => {
+          observer.observe(section);
+        });
+
+        // 스크롤 이벤트
+        window.addEventListener("scroll", () => {
+          const scrolled = window.scrollY > 300;
+          backToTop.style.opacity = scrolled ? "0.8" : "0.3";
+
+          const windowHeight =
+            document.documentElement.scrollHeight - window.innerHeight;
+          const scrolledPercent = (window.scrollY / windowHeight) * 100;
+          document.querySelector(
+            ".progress-indicator"
+          ).style.width = `${scrolledPercent}%`;
+
+          // 현재 섹션 하이라이트
+          let currentSection = "";
+          sections.forEach((section) => {
+            const rect = section.getBoundingClientRect();
+            if (
+              rect.top <= window.innerHeight * 0.3 &&
+              rect.bottom >= window.innerHeight * 0.3
+            ) {
+              currentSection = section.getAttribute("id");
+            }
+          });
+
+          // 네비게이션 하이라이트 업데이트
+          document.querySelectorAll(".nav-link").forEach((link) => {
+            const sectionId = link.getAttribute("href").substring(1);
+            if (sectionId === currentSection) {
+              link.classList.add("active");
+              // 해당 링크가 네비게이션 뷰포트 내에 완전히 보이도록 스크롤
+              const navContainer = document.querySelector(".nav-links");
+              const linkRect = link.getBoundingClientRect();
+              const containerRect = navContainer.getBoundingClientRect();
+
+              if (
+                linkRect.left < containerRect.left ||
+                linkRect.right > containerRect.right
+              ) {
+                link.scrollIntoView({
+                  behavior: "smooth",
+                  block: "nearest",
+                  inline: "center",
+                });
+              }
+            } else {
+              link.classList.remove("active");
+            }
+          });
+        });
+
+        // 백투탑 기능
+        backToTop.addEventListener("click", () => {
+          window.scrollTo({
+            top: 0,
+            behavior: "smooth",
+          });
+        });
+
+        // 검색 기능
+        searchInput.addEventListener("input", function (e) {
+          const searchText = e.target.value.toLowerCase().trim();
+          let hasResults = false;
+
+          // 이전 하이라이트 제거
+          document.querySelectorAll(".highlight").forEach((el) => {
+            el.outerHTML = el.innerHTML;
+          });
+
+          sections.forEach((section) => {
+            const content = section.innerHTML.toLowerCase();
+
+            if (searchText && content.includes(searchText)) {
+              section.classList.remove("hidden");
+              hasResults = true;
+
+              // 텍스트 하이라이트
+              const regex = new RegExp(
+                `(${searchText.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")})`,
+                "gi"
+              );
+              const nodes = section.childNodes;
+
+              function highlightText(node) {
+                if (node.nodeType === 3) {
+                  const matches = node.textContent.match(regex);
+                  if (matches) {
+                    const span = document.createElement("span");
+                    span.innerHTML = node.textContent.replace(
+                      regex,
+                      '<span class="highlight">$1</span>'
+                    );
+                    node.replaceWith(span);
+                  }
+                } else if (
+                  node.nodeType === 1 &&
+                  !node.classList.contains("highlight")
+                ) {
+                  node.childNodes.forEach(highlightText);
+                }
+              }
+
+              nodes.forEach(highlightText);
+            } else {
+              section.classList.toggle("hidden", searchText !== "");
+            }
+          });
+
+          // 검색 결과 없음 메시지 표시
+          noResults.classList.toggle("show", searchText && !hasResults);
+        });
+
+        // 검색 단축키
+        document.addEventListener("keydown", function (e) {
+          if ((e.ctrlKey || e.metaKey) && e.key === "f") {
+            e.preventDefault();
+            searchInput.focus();
+          }
+        });
+
+        // 컬러픽커 이벤트 리스너
+        document
+          .getElementById("colorPicker")
+          .addEventListener("input", (e) => {
+            updateThemeColor(e.target.value);
+          });
+
+        // 시스템 테마 감지 및 초기 설정
+        const prefersDarkScheme = window.matchMedia(
+          "(prefers-color-scheme: dark)"
+        );
+        const setThemeIcon = (isDark) => {
+          document.querySelectorAll(".theme-icon").forEach((icon) => {
+            icon.textContent = isDark ? "🌙" : "☀️";
+          });
+        };
+
+        // 초기 테마 설정
+        const initialTheme = prefersDarkScheme.matches ? "dark" : "light";
+        document.documentElement.setAttribute("data-theme", initialTheme);
+        setThemeIcon(prefersDarkScheme.matches);
+
+        // 시스템 테마 변경 감지
+        prefersDarkScheme.addEventListener("change", (e) => {
+          const newTheme = e.matches ? "dark" : "light";
+          document.documentElement.setAttribute("data-theme", newTheme);
+          setThemeIcon(e.matches);
+        });
+      });
+
       function toggleTheme() {
         const currentTheme =
           document.documentElement.getAttribute("data-theme");
         const newTheme = currentTheme === "light" ? "dark" : "light";
         document.documentElement.setAttribute("data-theme", newTheme);
-        document.querySelector(".theme-toggle").textContent =
-          newTheme === "light" ? "다크 모드" : "화이트 모드";
+        setThemeIcon(newTheme === "dark");
       }
 
-      const prefersDarkScheme = window.matchMedia(
-        "(prefers-color-scheme: dark)"
-      );
-      document.documentElement.setAttribute(
-        "data-theme",
-        prefersDarkScheme.matches ? "dark" : "light"
-      );
-      document.querySelector(".theme-toggle").textContent =
-        prefersDarkScheme.matches ? "화이트 모드" : "다크 모드";
+      function showColorPicker() {
+        const wrapper = document.querySelector(".color-picker-wrapper");
+        wrapper.classList.toggle("show");
+      }
 
-      prefersDarkScheme.addEventListener("change", (e) => {
-        const newTheme = e.matches ? "dark" : "light";
-        document.documentElement.setAttribute("data-theme", newTheme);
-        document.querySelector(".theme-toggle").textContent =
-          newTheme === "light" ? "다크 모드" : "화이트 모드";
+      function toggleColorPicker(button) {
+        // 다른 팝업들 모두 닫기
+        document.querySelectorAll(".color-picker-popup").forEach((popup) => {
+          if (!popup.parentElement.contains(button)) {
+            popup.classList.remove("show");
+          }
+        });
+        // 현재 버튼의 팝업 토글
+        const popup = button.querySelector(".color-picker-popup");
+        popup.classList.toggle("show");
+      }
+
+      function changeRandomColor() {
+        const hue = Math.floor(Math.random() * 360);
+        const saturation = 60;
+        const lightness = 45;
+        const color = `hsl(${hue}, ${saturation}%, ${lightness}%)`;
+        updateThemeColor(color);
+      }
+
+      function hslToHex(hslColor) {
+        // HSL 문자열에서 값 추출
+        const matches = hslColor.match(/\d+/g);
+        const h = parseInt(matches[0]);
+        const s = parseInt(matches[1]);
+        const l = parseInt(matches[2]);
+
+        const hDecimal = h / 360;
+        const sDecimal = s / 100;
+        const lDecimal = l / 100;
+
+        let r, g, b;
+        if (s === 0) {
+          r = g = b = l;
+        } else {
+          const q =
+            lDecimal < 0.5
+              ? lDecimal * (1 + sDecimal)
+              : lDecimal + sDecimal - lDecimal * sDecimal;
+          const p = 2 * lDecimal - q;
+
+          r = hueToRgb(p, q, hDecimal + 1 / 3);
+          g = hueToRgb(p, q, hDecimal);
+          b = hueToRgb(p, q, hDecimal - 1 / 3);
+        }
+
+        const toHex = (x) => {
+          const hex = Math.round(x * 255).toString(16);
+          return hex.length === 1 ? "0" + hex : hex;
+        };
+
+        return `#${toHex(r)}${toHex(g)}${toHex(b)}`;
+      }
+
+      function hueToRgb(p, q, t) {
+        if (t < 0) t += 1;
+        if (t > 1) t -= 1;
+        if (t < 1 / 6) return p + (q - p) * 6 * t;
+        if (t < 1 / 2) return q;
+        if (t < 2 / 3) return p + (q - p) * (2 / 3 - t) * 6;
+        return p;
+      }
+
+      // 컬러픽커 이벤트 리스너
+      document.getElementById("colorPicker").addEventListener("input", (e) => {
+        updateThemeColor(e.target.value);
       });
+
+      // 외부 클릭시 컬러픽커 닫기
+      document.addEventListener("click", (e) => {
+        const popup = document.querySelector(".color-picker-popup");
+        const colorButton = document.querySelector(".color-toggle");
+        if (!popup.contains(e.target) && !colorButton.contains(e.target)) {
+          popup.classList.remove("show");
+        }
+      });
+
+      function updateThemeColor(color) {
+        const root = document.documentElement;
+        root.style.setProperty("--primary-color", color);
+
+        // 버튼 배경색 업데이트
+        document.querySelectorAll(".control-button").forEach((btn) => {
+          btn.style.backgroundColor = color;
+        });
+
+        // 아이콘 배경색 업데이트
+        document.querySelectorAll(".icon").forEach((icon) => {
+          icon.style.backgroundColor = color;
+        });
+      }
+
+      function toggleMobileControls() {
+        const submenu = document.querySelector(".controls-submenu");
+        const toggleBtn = document.querySelector(".toggle-controls");
+
+        submenu.classList.toggle("show");
+        toggleBtn.classList.toggle("active");
+
+        // × 대신 + 사용하고 회전으로 처리
+        toggleBtn.textContent = "＋";
+      }
     </script>
   </body>
 </html>
